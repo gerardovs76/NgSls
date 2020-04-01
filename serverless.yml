@@ -1,0 +1,32 @@
+service: ngsls # Name whatever as you like!
+plugins:
+  - serverless-apigw-binary
+  - serverless-offline
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 192
+  timeout: 10
+  stage: ${opt:stage, 'dev'}
+package:
+  exclude: # By default exclude all files
+    - ./**
+  include: # Then start adding the relevant files/folder to package
+    - 'node_modules/aws-serverless-express/**'
+    - 'node_modules/binary-case/**'
+    - 'node_modules/type-is/**'
+    - 'node_modules/media-typer/**'
+    - 'node_modules/mime-types/**'
+    - 'node_modules/mime-db/**'
+    - 'dist/**'
+    - 'lambda.js'
+custom:
+  apigwBinary: # Library to add support for api gateway binary types
+    types:
+      - '*/*'
+functions:
+  api:
+    handler: lambda.handler # A file lambda.js will hold fn handler
+events:
+    - http: GET {proxy+}
+    - http: GET /
